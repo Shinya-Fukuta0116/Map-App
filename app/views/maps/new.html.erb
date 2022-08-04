@@ -77,26 +77,27 @@
   }
 </script>
   </div>
-  <div class="col-md-6">
-   <% @maps.each do |m| %>
-    <table>
-        <tr>
-          <th scope="row">住所</th>
-          <td><%= m.address %></td>
-        </tr>
-        <tr>
-          <th scope="row">緯度</th>
-          <td><%= m.latitude %></td>
-        </tr>
-        <tr>
-          <th scope="row">経度</th>
-          <td><%= m.longitude %></td>
-        </tr>
-      </tbody>
-    </table>
-  <% end %>
+    <div class="col-md-6">
+     <% @maps.each do |m| %>
+     <br>
+      <table>
+          <tr>
+            <th scope="row">住所</th>
+            <td><%= m.address %></td>
+          </tr>
+          <tr>
+            <th scope="row">緯度</th>
+            <td><%= m.latitude %></td>
+          </tr>
+          <tr>
+            <th scope="row">経度</th>
+            <td><%= m.longitude %></td>
+          </tr>
+        </tbody>
+      </table>
+    <% end %>
   </div>
 </div>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyACdC5MRGUAMjOY1ldVhfxo4d5syDIdMA4&callback=initMap" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=GOOGLE_MAP_KEY&callback=initMap" async defer></script>
 
 <table class="table table-dark">
