@@ -9,7 +9,8 @@ class MapsController < ApplicationController
   end
 
   def index
-    @map = Map.all(params[:id])
+    @map = Map.all
+    @map = Map.find(map_params)
 
   end
 

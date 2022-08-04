@@ -1,18 +1,13 @@
-<h2>Guide map</h2>
+<br>
   <%= form_with url: maps_path do |f| %>
     <div class="actions">
-      <%= f.label :address, '住所' %>
+      <%= f.label :address, '住所または地名' %>
       <%= f.text_field :address %>
-      <%= f.label :latitude,"緯度" %>
-      <%= f.text_field :latitude,:value =>"緯度", id: :latitude %>
-      <%= f.label :longitude,"経度" %>
-      <%= f.text_field :longitude,:value =>"経度", id: :longitude %>
-      <%= f.submit %>
-      <input id="address" type="textbox" value="GeekSalon">
       <input type="button" value="検索" onclick="codeAddress()">
+      <%= f.submit "保存"%>
     </div>
   <% end %>
-
+<br>
 <div class="row">
   <div class="col-md-6">
     <div id='map'></div>
@@ -79,7 +74,6 @@
   </div>
     <div class="col-md-6">
      <% @maps.each do |m| %>
-     <br>
       <table>
           <tr>
             <th scope="row">住所</th>
@@ -96,8 +90,8 @@
         </tbody>
       </table>
     <% end %>
-  </div>
+    </div>
 </div>
-<script src="https://maps.googleapis.com/maps/api/js?key=GOOGLE_MAP_KEY&callback=initMap" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['SECRET_KEY'] %>&callback=initMap" async defer></script>
 
 <table class="table table-dark">
