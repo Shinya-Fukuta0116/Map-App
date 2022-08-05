@@ -39,4 +39,4 @@
 yarn-debug.log*
 .yarn-integrity
 /.env
-/geocoder.rb
+/initializers/geocoder.rb

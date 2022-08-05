@@ -10,7 +10,7 @@ class MapsController < ApplicationController
 
   def index
     @map = Map.all
-    @map = Map.find(map_params)
+    gon.maps = Map.all
 
   end
 
