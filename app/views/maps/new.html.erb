@@ -1,18 +1,18 @@
 <br>
-<form id="form">
-  <label for="address">住所または地名</label>
-  <input type="text" id="address">
-  <input type="button" value="検索" onclick="codeAddress()">
-  <input type="button" onclick="save()" value="保存">
-</form>
+  <form id="form">
+    <strong><label for="address">住所または地名</label></strong>
+    <input type="text" id="address" size="35">
+    <input type="button" value="検索" class="btn btn-dark" onclick="codeAddress()">
+    <input type="button" onclick="save()" value="保存" class="btn btn-dark">
+  </form>
 <br>
 <div class="row">
   <div class="col-md-6">
     <div id='map'></div>
     <style>
       #map {
-        height: 500px;
-        width: 500px;
+        height: 540px;
+        width: 540px;
       }
     </style>
 
@@ -166,7 +166,7 @@
       .ulist{
         list-style: none;
         line-height:2em;
-        border:3px solid #cccccc;
+        line-width: 540px;
       	cursor:pointer;
        }
     </style>
