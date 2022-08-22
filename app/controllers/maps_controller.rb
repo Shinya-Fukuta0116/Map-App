@@ -9,14 +9,14 @@ class MapsController < ApplicationController
   end
 
   def index
-    @map = Map.all
-    gon.maps = Map.all
+    @maps = Map.all
+    gon.maps = @map
 
   end
 
 private
 
   def map_params
-      params.permit(:address,:latitude, :longitude)
+      params.permit(:name, :address,:latitude, :longitude)
   end
 end

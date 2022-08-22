@@ -1,92 +1,177 @@
 <br>
-  <%= form_with url: maps_path do |f| %>
-    <div class="actions">
-      <%= f.label :address, '住所または地名' %>
-      <%= f.text_field :address %>
-      <input type="button" value="検索" onclick="codeAddress()">
-      <%= f.submit "保存"%>
-    </div>
-  <% end %>
+<form id="form">
+  <label for="address">住所または地名</label>
+  <input type="text" id="address">
+  <input type="button" value="検索" onclick="codeAddress()">
+  <input type="button" onclick="save()" value="保存">
+</form>
 <br>
 <div class="row">
   <div class="col-md-6">
     <div id='map'></div>
-<style>
-#map {
-  height: 500px;
-  width: 500px;
-}
-</style>
+    <style>
+      #map {
+        height: 500px;
+        width: 500px;
+      }
+    </style>
 
-<script>
-  //初期マップの設定
-  let map
-  let marker
-  function initMap(){
-    geocoder = new google.maps.Geocoder()
+    <script>
+      //初期マップの設定
+      let map
+      let marker
+      const ul = document.getElementById("ul");
 
-    map = new google.maps.Map(document.getElementById('map'), {
-      center:  {lat: 35.6803997, lng:139.7690174},  //東京
-      zoom: 16,
+      function initMap() {
+        geocoder = new google.maps.Geocoder()
 
-    });
-  }
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: { lat: 35.6803997, lng: 139.7690174 }, //東京
+          zoom: 16,
 
-  //検索後のマップ作成
-  let geocoder
-  let aft
-  function codeAddress(){
-    let inputAddress = document.getElementById('address').value;
-    geocoder.geocode( { 'address': inputAddress}, function(results, status) {
-      if (status == 'OK') {
+        });
+      }
+      let addressListCount = 0;
 
-          //新しくマーカーを作成する
-          map.setCenter(results[0].geometry.location);
-              marker = new google.maps.Marker({
+      function save() {
+        console.log("保存");
+        const li = document.createElement("li");
+        li.innerText = searched_result.formatted_address;
+        li.id = "iro" + addressListCount;
+        //addressListCount = addressListCount + 1;
+
+        const ul = document.getElementById("ul");
+        ul.appendChild(li);
+
+        document.getElementById("iro" + addressListCount).addEventListener("click", function() {
+          //const text = document.getElementById("iro" + addressListCount).textContent;
+          //console.log(text);
+          //document.getElementById("iro" + addressListCount).textContent = "案内しない";
+          //document.getElementById("iro" + addressListCount).textContent = null;
+          document.getElementById("iro" + addressListCount).style.textDecoration = "line-through";
+          addressListCount = addressListCount - 1;
+          console.log("elem")
+        })
+        document.querySelectorAll('.ulist').forEach (elm => {
+        	elm.ondragstart = function () {
+        		event.dataTransfer.setData('text/plain', event.target.id);
+        	};
+        	elm.ondragover = function () {
+        		event.preventDefault();
+        		this.style.borderTop = '2px solid blue';
+        	};
+        	elm.ondragleave = function () {
+        		this.style.borderTop = '';
+        	};
+        	elm.ondrop = function () {
+        		event.preventDefault();
+        		let id = event.dataTransfer.getData('text/plain');
+        		let elm_drag = document.getElementById(id);
+        		this.parentNode.insertBefore(elm_drag, this);
+        		this.style.borderTop = '';
+        	};
+        });
+
+      }
+
+      /*let addressListCount = 0;
+
+      function tekitou() {
+        console.log("住所");
+        const li = document.createElement("li");
+        li.innerText = searched_result.formatted_address;
+        li.id = "iro" + addressListCount;
+        addressListCount = addressListCount + 1;
+        const ul = document.getElementById("ul");
+        ul.appendChild(li);
+      }
+      */
+      /*function tekitou2() {
+        console.log("tekitou2");
+            document.getElementById("iro0").style.color = "red";
+      }
+      */
+      //検索後のマップ作成
+      let geocoder
+      let aft
+      let searched_result = "";
+      let infoWindowDetail = "";
+
+      function codeAddress() {
+        let inputAddress = document.getElementById('address').value;
+        geocoder.geocode({ 'address': inputAddress }, function(results, status) {
+          if (status == 'OK') {
+            addressListCount = addressListCount + 1;
+            searched_result = results[0];
+            map.setCenter(results[0].geometry.location);
+            //新しくマーカーを作成する
+            marker = new google.maps.Marker({
               map: map,
               position: results[0].geometry.location,
               draggable: true // ドラッグ可能にする
-          });
+            });
 
-          //二度目以降か判断
-          aft = true
 
-          //検索した時に緯度経度を入力する
-          document.getElementById('latitude').value = results[0].geometry.location.lat();
-          document.getElementById('longitude').value = results[0].geometry.location.lng();
+            let ironame = "iro" + addressListCount
+            let infoWindowDetail = results[0].formatted_address;
+            /*let infoWindowCount = 0;
+                infoWindowDetail.id = "fukidashi" + infoWindowCount;
+                infoWindowCount = infoWindowCount + 1;
+            let fukidashiDetail = "fukidashi" + infoWindowCount;
+            */
+            let infoWindow = new google.maps.InfoWindow({
+                content: '<div class="window">' + infoWindowDetail + '</div>'
+            //吹き出しを追加
+              })
+            //google.maps.event.addListener(marker, 'click', (event) => {
+            marker.addListener("click", (event) => {
+              console.log('markerClicked')
+              console.log(event)
+              let element = document.getElementById(ironame)
+              if(element) {
+                element.style.color = "red";
+              }
+              console.log('markeradd')
+              infoWindow.open(map, marker);
+            });
+            google.maps.event.addListener(infoWindow, 'closeclick', function() {
+              marker.setMap(null);  //マーカーを削除
+              //document.getElementById("iro" + addressListCount).textContent = null; //リスト削除
+            });
 
-          // マーカーのドロップ（ドラッグ終了）時のイベント
-          google.maps.event.addListener( marker, 'dragend', function(ev){
+            //二度目以降か判断
+            //aft = true
+
+              //検索した時に緯度経度を入力する
+              //document.getElementById('latitude').value = results[0].geometry.location.lat();
+              //document.getElementById('longitude').value = results[0].geometry.location.lng();
+
+            // マーカーのドロップ（ドラッグ終了）時のイベント
+            //google.maps.event.addListener(marker, 'dragend', function(ev) {
               // イベントの引数evの、プロパティ.latLngが緯度経度
-              document.getElementById('latitude').value = ev.latLng.lat();
-              document.getElementById('longitude').value = ev.latLng.lng();
-          });
-      } else {
-        alert('該当する結果がありませんでした：' + status);
+              //document.getElementById('latitude').value = ev.latLng.lat();
+             // document.getElementById('longitude').value = ev.latLng.lng();
+            //});
+          }
+          else {
+            alert('該当する結果がありませんでした：' + status);
+          }
+        });
       }
-    });
-  }
-</script>
+    </script>
   </div>
-    <div class="col-md-6">
-     <% @maps.each do |m| %>
-      <table>
-          <tr>
-            <th scope="row">住所</th>
-            <td><%= m.address %></td>
-          </tr>
-          <tr>
-            <th scope="row">緯度</th>
-            <td><%= m.latitude %></td>
-          </tr>
-          <tr>
-            <th scope="row">経度</th>
-            <td><%= m.longitude %></td>
-          </tr>
-        </tbody>
-      </table>
-    <% end %>
-    </div>
+
+  <div class="col-md-6">
+    <style>
+      .ulist{
+        list-style: none;
+        line-height:2em;
+        border:3px solid #cccccc;
+      	cursor:pointer;
+       }
+    </style>
+    <ul class="ulist", "list-group text-secondary" id="ul"></ul>
+  </div>
 </div>
 <script src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['SECRET_KEY'] %>&callback=initMap" async defer></script>
 

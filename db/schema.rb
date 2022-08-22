@@ -13,6 +13,7 @@
 ActiveRecord::Schema.define(version: 2022_08_01_034151) do
 
   create_table "maps", force: :cascade do |t|
+    t.string "name"
     t.string "address"
     t.float "latitude"
     t.float "longitude"
