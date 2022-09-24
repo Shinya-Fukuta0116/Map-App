@@ -1,9 +1,13 @@
 <br>
+<!--data-latlng="(35.1603237, 136.9040502)" data-lat="35.1603237" data-lng="136.9040502"-->
+<!--data-latlng="(35.1648142, 136.9040502)" data-lat="35.1648142" data-lng="136.9040502"-->
+
   <form id="form">
     <strong><label for="address">住所または地名</label></strong>
     <input type="text" id="address" size="35">
     <input type="button" value="検索" class="btn btn-dark" onclick="codeAddress()">
     <input type="button" onclick="save()" value="保存" class="btn btn-dark">
+    <input type="button" onclick="route_making()" value="ルート作成" class="btn btn-dark">
   </form>
 <br>
 <div class="row">
@@ -16,10 +20,50 @@
       }
     </style>
 
+      <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+
     <script>
+      window.addEventListener("load", ()=>{
+        let today = new Date();
+        let week = ["日", "月", "火", "水", "木", "金", "土"];
+        let year = today.getFullYear();
+        let month = today.getMonth() + 1; // 1月~12月 -> 0~11
+        let date = today.getDate();
+        let day = today.getDay();
+        document.getElementById("date").innerHTML = year + "/" + month + "/" + date + "(" + week[day] + ")";
+      });
+        //関数名timerを定義
+      let timer = () => {
+          //現在の日時を変数nowに入れる
+        let now = new Date();
+        //id=timerタグの中身を書き換える
+        document.getElementById('RealtimeClockArea').innerHTML =
+        now.getHours() + '時' + now.getMinutes() + '分' + now.getSeconds() + '秒';
+      }
+
+      //setInterval(やりたい処理, 何msec毎に行うか？)
+      let timerID = setInterval(timer, 500);
+
+      $(function(){
+       $('#ul').sortable();
+      });
+
+      $(document).on("change",".preview-uploader",function(){
+      let elem = this                                                 //操作された要素を取得
+      let fileReader = new FileReader();                              //ファイルを読み取るオブジェクトを生成
+      fileReader.readAsDataURL(elem.files[0]);                        //ファイルを読み取る
+      fileReader.onload = (function () {                              //ファイル読み取りが完了したら
+          let imgTag = `<img width="300" src='${fileReader.result}'>` //img要素を生成
+          $(elem).next(".preview").html(imgTag)                       //画像をプレビュー
+          });
+      })
+
+
       //初期マップの設定
       let map
       let marker
+      let directionsService
+      let directionsRenderer
       const ul = document.getElementById("ul");
 
       function initMap() {
@@ -30,48 +74,92 @@
           zoom: 16,
 
         });
+        directionsService = new google.maps.DirectionsService();
+        directionsRenderer = new google.maps.DirectionsRenderer({
+          suppressMarkers: true // デフォルトのマーカーを削除
+        });
       }
       let addressListCount = 0;
+      function route_making() {
+        $("#ul li[data-checked='false']:first"); //リストの一番目を指定
+        $("#ul li[data-checked='false']:last");  //リストの最後を指定
+        $("#ul li[data-checked='false']"); //それ以外のリスト
+        let wayarray = []; //空の変数を用意
+        $("#ul li[data-checked='false']").not(':first').not(':last').each(function(){ //li(一番目と最後を除く)を一つずつ取り出す
+          console.log($(this).data("lat"))
+          console.log($(this).data("lng"))
+          let pos = new google.maps.LatLng($(this).data("lat"), $(this).data("lng")); //thisで取得し変数へ
+          wayarray.push({location: pos}); //経由地点の空変数へ入れる。
+        });
 
+        const first_lat = $("#ul li[data-checked='false']:first").data("lat"); //リストの一番目を指定
+        const first_lng = $("#ul li[data-checked='false']:first").data("lng"); //リストの一番目を指定
+        const last_lat  =  $("#ul li[data-checked='false']:last").data("lat");  //リストの最後を指定
+        const last_lng  =  $("#ul li[data-checked='false']:last").data("lng");  //リストの最後を指定
+        console.log(':li')
+
+        const pos1 =  new google.maps.LatLng(first_lat, first_lng);
+        const pos2 =  new google.maps.LatLng(last_lat, last_lng);
+
+        //const routeconnect = $('li').data("latlng", "lat", "lng");
+        //const latlng1 = new google.maps.LatLng(event.target.dataset.lat, event.target.dataset.lng)
+        //const latlng2 = new google.maps.LatLng(event.target.dataset.lat, event.target.dataset.lng)
+        console.log("latlng")
+        //const pos1 =  new google.maps.LatLng(35.1603237, 136.9040502);
+        //const pos2 =  new google.maps.LatLng(35.1648142, 136.9040502);
+        let request = {
+		      origin: pos1, //スタート
+		      destination: pos2, //ゴール
+		      waypoints: wayarray, //経由地点
+		      travelMode: google.maps.DirectionsTravelMode.WALKING, //移動手段
+	      };
+	      directionsService.route(request, function(result, status) {
+      		if (status == google.maps.DirectionsStatus.OK) {
+      			directionsRenderer.setOptions({
+      				preserveViewport: false //ズーム率を変更してルート全体を表示しない
+      	   });
+			// ルート検索の結果を地図上に描画
+    			directionsRenderer.setDirections(result);
+    			directionsRenderer.setMap(map);
+		      }
+	      });
+      }
       function save() {
         console.log("保存");
         const li = document.createElement("li");
-        li.innerText = searched_result.formatted_address;
+        //li.innerText = searched_result.formatted_address;
+        li.innerHTML =''+ searched_result.formatted_address + '<br><input type= "text"><input type = "file" class="preview-uploader"><div class="preview" style="width:300px;"></div>';
         li.id = "iro" + addressListCount;
+        li.dataset.checked = false;
+        li.dataset.latlng = searched_result.geometry.location;
+        li.dataset.lat = searched_result.geometry.location.lat();
+        li.dataset.lng = searched_result.geometry.location.lng();
         //addressListCount = addressListCount + 1;
-
         const ul = document.getElementById("ul");
         ul.appendChild(li);
 
-        document.getElementById("iro" + addressListCount).addEventListener("click", function() {
+        document.getElementById("iro" + addressListCount).addEventListener("click", function(event) {
           //const text = document.getElementById("iro" + addressListCount).textContent;
           //console.log(text);
           //document.getElementById("iro" + addressListCount).textContent = "案内しない";
           //document.getElementById("iro" + addressListCount).textContent = null;
-          document.getElementById("iro" + addressListCount).style.textDecoration = "line-through";
-          addressListCount = addressListCount - 1;
-          console.log("elem")
-        })
-        document.querySelectorAll('.ulist').forEach (elm => {
-        	elm.ondragstart = function () {
-        		event.dataTransfer.setData('text/plain', event.target.id);
-        	};
-        	elm.ondragover = function () {
-        		event.preventDefault();
-        		this.style.borderTop = '2px solid blue';
-        	};
-        	elm.ondragleave = function () {
-        		this.style.borderTop = '';
-        	};
-        	elm.ondrop = function () {
-        		event.preventDefault();
-        		let id = event.dataTransfer.getData('text/plain');
-        		let elm_drag = document.getElementById(id);
-        		this.parentNode.insertBefore(elm_drag, this);
-        		this.style.borderTop = '';
-        	};
-        });
+          //document.getElementById("iro" + addressListCount).style.textDecoration = "line-through";
+          const latlng = new google.maps.LatLng(event.target.dataset.lat, event.target.dataset.lng)
+          map.setCenter(latlng);
 
+
+
+          const checked = event.target.dataset.checked;
+          if (checked == 'false') {
+            event.target.style.textDecoration = "line-through";
+            //results[0].geometry.location = searched_result.geometry.location;
+            event.target.dataset.checked = true;
+          }else {
+            event.target.style.textDecoration = "";
+            //results[0].geometry.location = searched_result.geometry.location;
+            event.target.dataset.checked = false;
+          }
+        })
       }
 
       /*let addressListCount = 0;
@@ -104,13 +192,13 @@
             addressListCount = addressListCount + 1;
             searched_result = results[0];
             map.setCenter(results[0].geometry.location);
+            const latlng = results[0].geometry.location;
             //新しくマーカーを作成する
             marker = new google.maps.Marker({
               map: map,
               position: results[0].geometry.location,
               draggable: true // ドラッグ可能にする
             });
-
 
             let ironame = "iro" + addressListCount
             let infoWindowDetail = results[0].formatted_address;
@@ -129,12 +217,12 @@
               console.log(event)
               let element = document.getElementById(ironame)
               if(element) {
-                element.style.color = "red";
+                element.style.color = "crimson";
               }
               console.log('markeradd')
               infoWindow.open(map, marker);
             });
-            google.maps.event.addListener(infoWindow, 'closeclick', function() {
+            google.maps.event.addListener(infoWindow, 'closeclick', () => {
               marker.setMap(null);  //マーカーを削除
               //document.getElementById("iro" + addressListCount).textContent = null; //リスト削除
             });
@@ -170,7 +258,8 @@
       	cursor:pointer;
        }
     </style>
-    <ul class="ulist", "list-group text-secondary" id="ul"></ul>
+    <ul class="ulist", "list-group text-secondary" id="ul">
+    </ul>
   </div>
 </div>
 <script src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['SECRET_KEY'] %>&callback=initMap" async defer></script>

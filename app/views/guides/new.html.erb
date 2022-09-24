@@ -1,21 +1,12 @@
 <br>
-  <h2>顧客一覧</h2>
-    <table border="6" width="50%" height="50%">
-      <thead>
-        <tr align="center">
-          <th>id</th>
-          <th>日付</th>
-          <th>名前</th>
-          <th>担当者</th>
-        </tr>
-        <tr align="center">
-          <td>1</td>
-          <td>9/11</td>
-          <td>田中</td>
-          <td>小林</td>
-        </tr>
-      </thead>
-      <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+  <h2>新規顧客</h2>
+    <%= form_with model: Guide.new do |f| %>
+      <h4>顧客名</h4>
+      <%= f.text_field :customer_name %>
+      <h4>担当者</h4>
+      <%= f.text_field :sales_name %>
+    <% end %>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
     <script>
       window.addEventListener("load", ()=>{
         let today = new Date();
@@ -38,6 +29,5 @@
       //setInterval(やりたい処理, 何msec毎に行うか？)
       let timerID = setInterval(timer, 500);
     </script>
-<script src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['SECRET_KEY'] %>&callback=initMap" async defer></script>
-
+  <script src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['SECRET_KEY'] %>&callback=initMap" async defer></script>
 <table class="table table-dark">
