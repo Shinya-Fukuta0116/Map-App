@@ -10,20 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_09_11_082838) do
+ActiveRecord::Schema.define(version: 2022_09_24_045449) do
 
-  create_table "guides", force: :cascade do |t|
-    t.string "customer_name"
-    t.string "sales_name"
+  create_table "guide_details", force: :cascade do |t|
+    t.string "address"
+    t.integer "display_order"
+    t.integer "guide_id"
+    t.boolean "checked"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "maps", force: :cascade do |t|
-    t.string "name"
-    t.string "address"
-    t.float "latitude"
-    t.float "longitude"
+  create_table "guides", force: :cascade do |t|
+    t.string "customer_name"
+    t.string "sales_name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

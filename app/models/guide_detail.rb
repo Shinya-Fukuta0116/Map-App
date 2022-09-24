@@ -1,0 +1,2 @@
+class GuideDetail < ApplicationRecord
+end
