@@ -2,13 +2,19 @@
   <div class="container-fluid">
     <%= link_to 'Guide map', root_path, class:"navbar-brand text-light" %>
     <form class="d-flex">
+      <% if user_signed_in? %>
       <%= link_to 'new', root_path, class:"nav-link text-light" %>
+      <%= link_to 'Index', guide_details_path, class:"nav-link text-light" %>
       <li class="nav-item">
-        <%= link_to 'Index', guide_details_index_path, class:"nav-link text-light" %>
+        <%= link_to "Logout", destroy_user_session_path, class:"nav-link text-light", method: :delete %>
         <li class="nav-link text-success" id="date">Date</li>
         <li class="nav-link text-success" id="RealtimeClockArea">The time is...</li>
       </li>
+    <% else %>
+        <%= link_to "Sign up", new_user_registration_path, class:"nav-link text-light"%>
+        <%= link_to "Login", new_user_session_path, class:"nav-link text-light" %>
     </form>
+    <% end %>
       <style>
         .nav-item{
           list-style: none;

@@ -1,0 +1,2 @@
+class GuideMemo < ApplicationRecord
+end

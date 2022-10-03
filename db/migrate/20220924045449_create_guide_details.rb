@@ -4,7 +4,7 @@ class CreateGuideDetails < ActiveRecord::Migration[6.1]
       t.string :address
       t.integer :display_order
       t.integer :guide_id
-      t.boolean :checked
+      t.boolean :checked, null: false, default: false
 
       t.timestamps
     end

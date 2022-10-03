@@ -10,6 +10,6 @@ class GuideDetailsController < ApplicationController
 
 private
 
-  def map_params
-  end
+    def guide_details_params
+    end
 end
