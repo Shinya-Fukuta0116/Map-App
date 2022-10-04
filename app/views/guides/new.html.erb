@@ -1,6 +1,6 @@
 <br>
   <h2>新規顧客</h2>
-    <%= form_with model:guide, url: guides_path do |f| %>
+    <%= form_with model: @guide, url: guides_path do |f| %>
       <h4>顧客名</h4>
       <%= f.text_field :customer_name %>
       <h4>担当者</h4>
@@ -31,4 +31,3 @@
       let timerID = setInterval(timer, 500);
     </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['SECRET_KEY'] %>&callback=initMap" async defer></script>
-<table class="table table-dark">
