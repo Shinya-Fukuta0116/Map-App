@@ -9,14 +9,17 @@ class GuidesController < ApplicationController
   end
 
   def create
-    @guide = Guide.new(guides_params)
-    @guide = Guide.save
-    redirect_to new_guide_detail_path(@guide)
+    @guide = Guide.new(guide_params)
+    if @guide.save
+      redirect_to new_guide_detail_path(@guide)
+    else
+      render "new"
+    end
   end
 
   private
 
-    def guides_params
+    def guide_params
       params.require(:guide).permit(:customer_name, :sales_name, :complete)
     end
 end
