@@ -5,13 +5,13 @@ class GuidesController < ApplicationController
 
 
   def index
-
+    @guide = Guide.all
   end
 
   def create
     @guide = Guide.new(guide_params)
     if @guide.save
-      redirect_to new_guide_detail_path(@guide)
+      redirect_to edit_guide_detail_path(@guide)
     else
       render "new"
     end

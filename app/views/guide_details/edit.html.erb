@@ -8,7 +8,9 @@
     <input type="button" value="検索" class="btn btn-dark" onclick="codeAddress()">
     <input type="button" onclick="save()" value="保存" class="btn btn-dark">
     <input type="button" onclick="route_making()" value="ルート作成" class="btn btn-dark">
+    <input type="button" onclick="ajaxtest()" value="AjaxTest" class="btn btn-warning">
   </form>
+    顧客名:<%=@guide.customer_name %>さん
 <br>
 <div class="row">
   <div class="col-md-6">
@@ -23,6 +25,7 @@
       <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 
     <script>
+
       window.addEventListener("load", ()=>{
         let today = new Date();
         let week = ["日", "月", "火", "水", "木", "金", "土"];
@@ -57,7 +60,6 @@
           $(elem).next(".preview").html(imgTag)                       //画像をプレビュー
           });
       })
-
 
       //初期マップの設定
       let map
@@ -245,6 +247,20 @@
             alert('該当する結果がありませんでした：' + status);
           }
         });
+      }
+
+      function ajaxtest(){
+        const data = {
+
+        };
+        const guide_id = 8;
+          $.ajax({
+            method:"post",
+            url:"/guide_details/"+guide_id+"/edit/guide_map",
+            data:JSON.stringify(data),  // JSONデータ本体
+            contentType: 'application/json', // リクエストの Content-Type
+            dataType: "json",
+          })
       }
     </script>
   </div>

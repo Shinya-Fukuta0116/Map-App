@@ -9,12 +9,14 @@
           <th>名前</th>
           <th>担当者</th>
         </tr>
-        <tr align="center">
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-        </tr>
+        <% @guide.each do |guide| %>
+          <tr align="center">
+            <td><%=guide.id %></td>
+            <td><%=guide.created_at %></td>
+            <td><%=guide.customer_name %></td>
+            <td><%=guide.sales_name %></td>
+          </tr>
+        <% end %>
       </thead>
       <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
     <script>
