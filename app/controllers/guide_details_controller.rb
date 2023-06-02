@@ -5,8 +5,8 @@ class GuideDetailsController < ApplicationController
   end
 
   def guide_map
-    @guide = Guide.find(params[:id])
-    render json:@guide
+    params[:data]
+    render json:users
   end
   def create
 

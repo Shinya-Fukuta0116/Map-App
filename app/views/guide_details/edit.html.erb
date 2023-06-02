@@ -3,12 +3,13 @@
 <!--data-latlng="(35.1648142, 136.9040502)" data-lat="35.1648142" data-lng="136.9040502"-->
 
   <form id="form">
+    <%= csrf_meta_tags %>
     <strong><label for="address">住所または地名</label></strong>
     <input type="text" id="address" size="35">
     <input type="button" value="検索" class="btn btn-dark" onclick="codeAddress()">
     <input type="button" onclick="save()" value="保存" class="btn btn-dark">
     <input type="button" onclick="route_making()" value="ルート作成" class="btn btn-dark">
-    <input type="button" onclick="ajaxtest()" value="AjaxTest" class="btn btn-warning">
+    <input type="button" onclick="ajaxtest(<%= @guide.id %>)" value="AjaxTest" class="btn btn-warning">
   </form>
     顧客名:<%=@guide.customer_name %>さん
 <br>
@@ -126,6 +127,7 @@
 		      }
 	      });
       }
+      let routeData = [];  // ルートデータを保持する配列
       function save() {
         console.log("保存");
         const li = document.createElement("li");
@@ -162,6 +164,10 @@
             event.target.dataset.checked = false;
           }
         })
+        routeData.push({
+          lat: searched_result.geometry.location.lat(),
+          lng: searched_result.geometry.location.lng()
+        });
       }
 
       /*let addressListCount = 0;
@@ -249,11 +255,12 @@
         });
       }
 
-      function ajaxtest(){
+      function ajaxtest(guide_id){
         const data = {
-
+          key1: "value1",
+          key2: "value2",
+          routeData: routeData,
         };
-        const guide_id = 8;
           $.ajax({
             method:"post",
             url:"/guide_details/"+guide_id+"/edit/guide_map",
