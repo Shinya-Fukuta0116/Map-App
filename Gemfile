@@ -61,3 +61,5 @@ end
 
   gem 'bootstrap', '~> 5.2.0'
   gem 'jquery-rails'
+  gem 'rqrcode'
+
