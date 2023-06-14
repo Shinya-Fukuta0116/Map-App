@@ -12,7 +12,6 @@
     <div id="qrcode-container">
       <input type="button" onclick="ajaxtest(<%= @guide.id %>)" id="show-qrcode-button" value="QR作成" class="btn btn-warning">
       <div id="qrcode" style="display: none;">
-        <canvas width="128" height="128"></canvas>
         <img>
       </div>
     </div>
@@ -29,25 +28,7 @@
         width: 540px;
       }
     </style>
-    <script>
-      // ボタン要素を取得します
-      var showQRCodeButton = document.getElementById("show-qrcode-button");
 
-      // QRコードを表示するための関数を定義します
-      function showQRCode() {
-        var qrcodeContainer = document.getElementById("qrcode");
-        qrcodeContainer.style.display = "block";
-
-        // ここでQRコードの生成処理を行います
-
-        // 例として、QRコード画像のURLを設定します
-        var qrCodeImage = qrcodeContainer.querySelector("img");
-        qrCodeImage.src = "https://example.com/qrcode.png";
-      }
-
-      // ボタンにクリックイベントリスナーを追加します
-      showQRCodeButton.addEventListener("click", showQRCode);
-    </script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 
     <script>
@@ -289,10 +270,14 @@
       }
 
 
-      // QRコードを生成して表示する関数
-      function generateQRCode(text) {
-        const qrcode = new QRCode(document.getElementById("qrcode"), {
-          text: text,
+     function generateQRCode() {
+        const address = document.getElementById('address').value;
+        const qrCodeContainer = document.getElementById('qrcode');
+        qrCodeContainer.style.display = 'block';
+
+        // QRコードの生成処理
+        const qrCode = new QRCode(qrCodeContainer, {
+          text: address,
           width: 128,
           height: 128,
         });

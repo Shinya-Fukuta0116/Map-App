@@ -1,4 +1,5 @@
 require 'rqrcode'
+require 'base64'
 
 class GuideDetailsController < ApplicationController
   skip_before_action :verify_authenticity_token
@@ -8,22 +9,16 @@ class GuideDetailsController < ApplicationController
   end
 
   def guide_map
-    route_data = params[:routeData]
+    addresses = fetchAddresses
 
-    # QRコードのデータを生成
-    qr_code_data = route_data.to_json
+    # 住所を結合してルート情報を作成
+    route_info = addresses.join(', ')
 
-    # QRコードを生成
-    qr_code = RQRCode::QRCode.new(qr_code_data)
+    # QRコードの生成
+    qr_code = RQRCode::QRCode.new(route_info)
 
-    # 生成したQRコードを画像として出力
+    # QRコードのイメージを作成
     qr_code_image = qr_code.as_png(size: 300)
-
-    # 画像を一時ファイルとして保存
-    qr_code_file = Tempfile.new(['qrcode', '.png'])
-    qr_code_file.binmode
-    qr_code_file.write(qr_code_image.to_s)
-    qr_code_file.rewind
 
     # 画像をBase64エンコード
     encoded_image = Base64.encode64(qr_code_image.to_s)
@@ -41,6 +36,15 @@ class GuideDetailsController < ApplicationController
   end
 
   private
+
+  def fetchAddresses
+    # Ajaxを使用して住所データを取得する処理
+    # 以下はGuideDetailモデルから住所データを取得する例です
+    addresses = GuideDetail.pluck(:address)
+
+    # 住所の配列を返す
+    addresses
+  end
 
   def guide_details_params
     params.require(:guide_detail).permit(:guide_id, :address, :display_order)
